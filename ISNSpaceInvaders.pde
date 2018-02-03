@@ -26,7 +26,7 @@ int screen ;
 // aire triangle
 double aireT;
 //Police d'écriture
-PFont f;
+PFont titre, texte;
 //Images
 PImage fondAccueil,fondJeu,asteroid , vaisseau;
 //Score du joueur
@@ -34,8 +34,8 @@ int playerScore=0;
 // menu option
 ControlP5 cp5;
 //
-float volumeM =0.05;
-float volumeE = 0.05;
+float volumeM = 0.25;
+float volumeE = 0.50;
 //
 int dropRate = 5;
 
@@ -43,7 +43,8 @@ int dropRate = 5;
 void setup(){
   size(800,600);
   frameRate(60);
-  f = createFont("TestPolice.otf",1);
+  titre = createFont("PoliceTitre.ttf",1);
+  texte = createFont("PoliceTexte.ttf",1);
   smooth();
   xVaisseau = width>>1;  
   yVaisseau = height>>1;
@@ -52,8 +53,9 @@ void setup(){
   aireT = triangleA(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));
   explode = new SoundFile(this, "8BitExplosion.mp3"); //Variable qui correspond à un fichier son placé dans /data du dossier projet
   music = new SoundFile(this , "BackgroundMusic.mp3");
-  music.amp(volumeM);
+  music.amp((0.25*volumeM));
   music.loop();
+  explode.amp(0.05*volumeE);
   
   fondAccueil = loadImage("fondAccueil.jpg");
   fondJeu = loadImage("fondJeu.png");
@@ -99,7 +101,7 @@ void setup(){
       .setPosition(10,350)
       .setSize(550,40)
       .setRange(0,100)
-      .setValue(volumeM*100)
+      .setValue(25)
       .setId(5)
       .setVisible(false);
       
@@ -107,7 +109,7 @@ void setup(){
       .setPosition(10,400)
       .setSize(550,40)
       .setRange(0,100)
-      .setValue(volumeE*100)
+      .setValue(50)
       .setId(6) 
       .setVisible(false);
       
@@ -134,33 +136,35 @@ void AffOp()
   imageMode(CENTER); 
   image(asteroid,725,70,tE,tE);
   image(vaisseau,725,190,tV,tV);
-  volumeM=cp5.getController("Volume musique").getValue()/100;
-  music.amp(volumeM);
-   
+  
+  volumeM=(cp5.getController("Volume musique").getValue())/100;
+  music.amp(0.25*volumeM);
+  
+  volumeE=(cp5.getController("Volume Explosion").getValue())/100;
+  explode.amp(0.05*volumeE);
 }
 
 void ecranOptions(){
   background(fondAccueil);
-  fill(255,0,0);
-    
-   cp5.getController("Taille Enemis").setVisible(true);
-   cp5.getController("Taille Vaisseau").setVisible(true);
-   cp5.getController("Vitesse Ennemis").setVisible(true);
-   cp5.getController("Vitesse Vaisseau").setVisible(true);
-   cp5.getController("Volume musique").setVisible(true);
-   cp5.getController("Volume Explosion").setVisible(true);
-   cp5.getController("Chance d'apparation d'un ennemi").setVisible(true);
-  textFont(f,30);
+  cp5.getController("Taille Enemis").setVisible(true);
+  cp5.getController("Taille Vaisseau").setVisible(true);
+  cp5.getController("Vitesse Ennemis").setVisible(true);
+  cp5.getController("Vitesse Vaisseau").setVisible(true);
+  cp5.getController("Volume musique").setVisible(true);
+  cp5.getController("Volume Explosion").setVisible(true);
+  cp5.getController("Chance d'apparation d'un ennemi").setVisible(true);
   AffOp();
+ 
+  fill(0,127,255);
+  textFont(titre,25);
   text("Back / Retour",width>>1,height*0.9+10);
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.9)+40 && mouseY>(height*0.9)-40) { // Retour
     fill(255,50);
   }
   else noFill();
   rect(width>>1,height*0.9,200,80);
-
-
 }
+
 void draw(){
   switch(screen) {
     case 0: ecranAccueil(); cursor(); break;  // Affichage Ecran Accueil
@@ -171,16 +175,17 @@ void draw(){
             bougerVaisseau();
             collision();
             affichage();
-            textFont(f,20);
-            text("Space/Espace : Pause",width-140,20);
+            textFont(texte,20);
+            text("Space/Espace : Pause",width-100,20);
             String score = "Score : "+playerScore;
-            text(score,40,20);
+            textFont(texte,25);
+            text(score,60,30);
             if(espace){
               screen=0;
             }
             break;
    case 2: ecranOptions(); break;             // Ecran Options     
-   case 3: ecranCopyrights(); break;          // Ecran Copyrights      
+   case 3: ecranCredits(); break;          // Ecran Copyrights      
    case 4: ecranSortie(); break;
   }
 }
@@ -192,7 +197,7 @@ void mousePressed(){
   if (screen == 0){ // Ecran Accueil
    if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height/3)+40 && mouseY>(height/3)-40) screen=1; //Click Souris sur Play/Jouer
    if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height>>1)+40 && mouseY>(height>>1)-40) screen=2; // Click Souris sur Options
-   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.67)+40 && mouseY>(height*0.67)-40) screen=3; // Click Souris sur Copyrights
+   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.67)+40 && mouseY>(height*0.67)-40) screen=3; // Click Souris sur Credits
    if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.84)+40 && mouseY>(height*0.84)-40) screen=4; // Click Souris sur Fin
   }
   if(screen == 2){ // Ecran Options
@@ -210,17 +215,12 @@ void mousePressed(){
       vSpeed =(int) cp5.getController("Vitesse Vaisseau").getValue();
       eSpeed =(int) cp5.getController("Vitesse Ennemis").getValue();
       dropRate =(int) cp5.getController("Chance d'apparation d'un ennemi").getValue()/2;  
-      volumeE=cp5.getController("Volume Explosion").getValue()/100;
       
-      aireT = triangleA(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));
-      
-      explode.amp(volumeE);
-      
-      
+      aireT = triangleA(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));  
       screen=0;
     }
   }
-  if (screen == 3){ // Ecran Copyrights
+  if (screen == 3){ // Ecran Crédits
     if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.9)+40 && mouseY>(height*0.9)-40) screen=0; //Retour Accueil
   }
   if (screen == 4){ // Ecran Leave
@@ -238,18 +238,18 @@ void ecranAccueil(){
   noFill();
   stroke(0,0,0);
   rectMode(CENTER);
-  textFont(f,75);
+  textFont(titre,75);
   textAlign(CENTER);
   fill(255,0,0);
   text("ASTROBREAKER",width>>1,height/5);
-  textFont(f,30);
+  textFont(titre,28);
   noFill();
   if( (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height/3)+40 && mouseY>(height/3)-40) ){ //Souris sur PLAY / JOUER
    fill(255,50);
   } else noFill();
   rect(width>>1,height/3,200,80);
   fill(255,0,0);
-  text("PLAY / JOUER",width>>1,(height/3)+10); 
+  text("Play / Jouer",width>>1,(height/3)+10); 
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height>>1)+40 && mouseY>(height>>1)-40) { // Souris sur Options
   fill(255,50);
   } else noFill();
@@ -261,7 +261,7 @@ void ecranAccueil(){
   } else noFill();
   rect(width>>1,height*0.67,200,80);
   fill(255,0,0);
-  text("Copyrights",width>>1,height*0.67+10);
+  text("Credits",width>>1,height*0.67+10);
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.84)+40 && mouseY>(height*0.84)-40) { // Fin
   fill(255,50);
   } else noFill();
@@ -282,13 +282,13 @@ void ajouterEnnemis(){
 
 
 
-void ecranCopyrights(){
+void ecranCredits(){
   background(fondJeu);
   textAlign(CENTER);
-  textFont(f,75);
+  textFont(titre,75);
   fill(255,0,0);
-  text("Copyrights",width>>1,height/5);
-  textFont(f,30);
+  text("Credits",width>>1,height/5);
+  textFont(texte,30);
   text("blablablablablablablablablablablablablabla",width>>1,height/3);
   text("blablablablablablablablablablablablablabla",width>>1,height/3+40);
   text("blablablablablablablablablablablablablabla",width>>1,height/3+80);
@@ -307,6 +307,7 @@ void ecranSortie(){
   background(fondAccueil);
   textAlign(CENTER);
   fill(255,0,0);
+  textFont(texte,30);
   text("Êtes-vous sûr de vouloir quitter ?",width>>1,height/3);
   if (mouseX<(width>>2)+100 && mouseX>(width>>2)-100 && mouseY<(height>>1)+40 && mouseY>(height>>1)-40) { // Retour
     fill(255,50);
@@ -318,7 +319,7 @@ void ecranSortie(){
   }
   else noFill();
   rect(width*0.75,height>>1,200,80);
-  textFont(f,30);
+  textFont(texte,30);
   fill(255,0,0);
   text("Yes / Oui",width>>2,(height>>1)+10);
   text("No / Non",width*0.75,(height>>1)+10);
@@ -368,7 +369,6 @@ void keyReleased(){
 }
 
 void Sound(){ //Fonction appelée lors de chaque colision qui produit un son
-    explode.amp(volumeE);
     explode.play();
 }
 
