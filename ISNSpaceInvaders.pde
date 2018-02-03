@@ -19,7 +19,7 @@ int vSpeed = 6;
 
 int xVaisseau;                //Coordonnées du vaisseau
 int yVaisseau;
-int xs1,ys1,xs2,ys2,xs3,ys3;  //Coordonnées des sommets du vaisseau (en triangle)
+int xs1,ys1,xs2,ys2,xs3,ys3;  //Coordonnées des sommets du vaisseau (en triangle) s1 = sommet gauche, s2 = sommet haut droit, s3 = sommet bas droit
 
 ArrayList<Integer> xE = new ArrayList();  //Liste des coordonnées des ennemis
 ArrayList<Integer> yE = new ArrayList();
@@ -47,6 +47,9 @@ float volumeE = 0.50;         //Valeur initiale en % du volume de l'explosion
 
 int spawnRate = 5;            //Valeur initiale en % taux d'apparition maximum
 
+color sliderActiveColor=#FF0000, sliderForegroundColor=#AA0000;         //Couleurs liées au sliderBar
+color gameTitleColor=#FF0000, homeTextColor=#FF0000, gameTextColor=#FF0000, creditsTextColor=#FF0000, exitTextColor=#FF0000;    //Couleurs liées au texte dans les différents menus
+color optionsBackButtonColor=#007FFF, creditsBackButtonColor=#FF0000, exitYesButtonColor=#FF0000, exitNoButtonColor=#FF0000;    //Couleurs liées au texte dans différents "boutons"
  
 void setup(){
   size(800,600);
@@ -72,10 +75,10 @@ void setup(){
   asteroid = loadImage("asteroid.png");
   vaisseau = loadImage("vaisseau.png");
   
-   cp5 = new ControlP5(this);                                      //Initialisation du controlleur
-   cp5.setColorActive(0xffff0000).setColorForeground(0xffaa0000);  //Réglage de la couleur lors du mouse-over et couleur en règle générale des barres
+   cp5 = new ControlP5(this);                                                        //Initialisation du controlleur
+   cp5.setColorActive(sliderActiveColor).setColorForeground(sliderForegroundColor);  //Réglage de la couleur lors du mouse-over et couleur en règle générale des barres
    
-    cp5.addSlider("Taille Enemis")                                 //Initialisation des différentes barres avec leurs paramètres (Position, taille, valeurMin/Max, valeur initiale, visibilité)
+    cp5.addSlider("Taille Enemis")                                                   //Initialisation des différentes barres avec leurs paramètres (Position, taille, valeurMin/Max, valeur initiale, visibilité)
       .setPosition(10,50)
       .setSize(550,40)
       .setRange(15,100)
@@ -148,7 +151,7 @@ void ecranAccueil(){
   rectMode(CENTER);
   textFont(titre,75);
   textAlign(CENTER);
-  fill(255,0,0);
+  fill(gameTitleColor);
   text("ASTROBREAKER",width>>1,height/5);
   textFont(titre,28);
   noFill();
@@ -173,7 +176,7 @@ void ecranAccueil(){
   else noFill();
   rect(width>>1,height*0.84,200,80);                                                                          //Réalisation de la case
   
-  fill(255,0,0);                                                                                              //Coloration du texte
+  fill(homeTextColor);                                                                                        //Coloration du texte
   text("Play / Jouer",width>>1,(height/3)+10);                                                                //Ecriture du texte aux bons emplacements
   text("Options",width>>1,(height>>1)+10);
   text("Credits",width>>1,height*0.67+10);
@@ -193,6 +196,8 @@ void ecranJeu(){
   collision();
   affichage();
   
+  fill(gameTextColor);
+  stroke(255,0,0);
   textFont(texte,20);                                  //Ecriture des différents éléments
   text("Space/Espace : Pause",width-100,20);
   String score = "Score : "+playerScore;
@@ -220,8 +225,8 @@ void ecranOptions(){
   
   AffOp();
  
-  fill(0,127,255);
-  textFont(titre,25);
+  fill(optionsBackButtonColor);
+  textFont(texte,25);
   text("Back / Retour",width>>1,height*0.9+10);
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.9)+40 && mouseY>(height*0.9)-40) {  //Bouton retour à l'écran d'accueil (avec un remplissange semi-transparent au mouse-over)
     fill(255,50);
@@ -258,7 +263,7 @@ void ecranCredits(){
   background(fondJeu);
   textAlign(CENTER);
   textFont(titre,75);
-  fill(255,0,0);
+  fill(creditsTextColor);
   text("Credits",width>>1,height/5);
   textFont(texte,30);
   text("blablablablablablablablablablablablablabla",width>>1,height/3);
@@ -267,6 +272,7 @@ void ecranCredits(){
   text("blablablablablablablablablablablablablabla",width>>1,height/3+120);
   text("blablablablablablablablablablablablablabla",width>>1,height/3+160);
   text("blablablablablablablablablablablablablabla",width>>1,height/3+200);
+  fill(creditsBackButtonColor);
   text("Back / Retour",width>>1,height*0.9+10);
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.9)+40 && mouseY>(height*0.9)-40) {   //Bouton Retour
     fill(255,50);
@@ -282,7 +288,7 @@ void ecranCredits(){
 void ecranSortie(){
   background(fondAccueil);
   textAlign(CENTER);
-  fill(255,0,0);
+  fill(exitTextColor);
   textFont(texte,30);
   text("Êtes-vous sûr de vouloir quitter ?",width>>1,height/3);
   
@@ -297,8 +303,9 @@ void ecranSortie(){
   rect(width*0.75,height>>1,200,80);
   
   textFont(texte,30);
-  fill(255,0,0);
+  fill(exitYesButtonColor);
   text("Yes / Oui",width>>2,(height>>1)+10);
+  fill(exitNoButtonColor);
   text("No / Non",width*0.75,(height>>1)+10);
 }
 
@@ -389,16 +396,17 @@ void bougerVaisseau(){  //Mouvement du vaisseau
   if(left && (xs1>0))      xVaisseau-=vSpeed;  //Mouvement vers la gauche (on soustrait la vitesse (en pixel) sur x) ssi le vaisseau n'est pas sur le bord gauche et que la touche "left" est enfoncée
   if(right && (xs2<width)) xVaisseau+=vSpeed;  //Mouvement vers la droite (on additionne la vitesse (en pixel) sur x) ssi le vaisseau n'est pas sur le bord droit et que la touche "right" est enfoncée
     
-    // nouveau sommet triangle
-  xs1=xVaisseau;
-  ys1=yVaisseau;
+  xs1=xVaisseau;        //Calcul des nouvelles coordonnées des sommets du triangle
+  ys1=yVaisseau;        //s1 = sommet gauche, s2 = sommet haut droit, s3 = sommet bas droit
   xs2=xVaisseau+tVaisseau;
   ys2=yVaisseau-(tVaisseau>>1);
   xs3=xVaisseau+tVaisseau;
   ys3=yVaisseau+(tVaisseau>>1);
 }
 
-
+//
+//Collision
+//
 
 void collision(){
   float x,y,r;
@@ -421,23 +429,6 @@ void collision(){
   }
 }
 
-void Sound(){ //Fonction appelée lors de chaque colision qui produit un son
-    explode.play();
-}
- 
-float triangleA(int px1, int py1 , int px2 ,int py2 ,int px3 , int py3){ // calcul l'aire d'un triangle
- 
-  float A , longA,longB,longC ,longD;
-  // A = 1/2||AB vectoriel AC||
-  longA=px1-px3;
-  longB=py1-py3;
-  longC=px2-px3;
-  longD=py2-py3;
- 
-  A= 0.5*abs((longA*longD)-(longB*longC));
-  return A;
-}
-   
 boolean colision(float x,float y ,float r){
   int xC,yC,xG,yG; // point sur le cercle de du vecteur centre gravité triangle centre cercle
   float longux,longuy,angle ,A1,A2,A3,AT;
@@ -464,25 +455,36 @@ boolean colision(float x,float y ,float r){
   
   return false;
 }
- 
+
 boolean colC(float xs,float ys,float xc,float yc,float r){// collision avec cercle et point sommet du triangle
   return (xs-xc)*(xs-xc)+(ys-yc)*(ys-yc)<= r*r;
  
 }
+
+float triangleA(int px1, int py1 , int px2 ,int py2 ,int px3 , int py3){ // calcul l'aire d'un triangle
+  float A , longA,longB,longC ,longD;
+  // A = 1/2||AB vectoriel AC||
+  longA=px1-px3;
+  longB=py1-py3;
+  longC=px2-px3;
+  longD=py2-py3;
  
+  A= 0.5*abs((longA*longD)-(longB*longC));
+  return A;
+}
+   
+void Sound(){ //Fonction appelée lors de chaque colision qui produit un son
+    explode.play();
+} 
+
 void affichage(){
   int x,y;
  
   for(int i = 0;i<xE.size();i++){ // affiche chaque ennemi
     x = xE.get(i); y = yE.get(i);
-    fill(255);
-    stroke(0);
     imageMode(CENTER);
     image(asteroid,x,y,tEnnemis,tEnnemis); 
   }
-  
-  fill(255,0,0);
-  stroke(255,0,0);
   imageMode(CORNER);
   image(vaisseau,xs1,ys1-tVaisseau/2,tVaisseau,tVaisseau);
 }
