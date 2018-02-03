@@ -51,7 +51,7 @@ void setup(){
   screen = 0;
   aireT = triangleA(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));
   explode = new SoundFile(this, "8BitExplosion.mp3"); //Variable qui correspond à un fichier son placé dans /data du dossier projet
-  music = new SoundFile(this , "NES BAND.mp3");
+  music = new SoundFile(this , "BackgroundMusic.flac");
   music.amp(volumeM);
   music.loop();
   
