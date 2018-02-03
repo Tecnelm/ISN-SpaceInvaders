@@ -3,11 +3,11 @@ import controlP5.*;
 SoundFile explode;
 SoundFile music;
 // taille des Objets
-int tVaisseau = 50;
-int tEnnemis = 45;
+int tVaisseau = 45;
+int tEnnemis = 40;
 //vitesse ennemis +vaisseau
 int eSpeed = 4;
-int vSpeed = 4;
+int vSpeed = 6;
 // coordonnées vaisseau
 int xVaisseau;
 int yVaisseau;
@@ -134,6 +134,8 @@ void AffOp()
   imageMode(CENTER); 
   image(asteroid,725,70,tE,tE);
   image(vaisseau,725,190,tV,tV);
+  volumeM=cp5.getController("Volume musique").getValue()/100;
+  music.amp(volumeM);
    
 }
 
@@ -209,10 +211,9 @@ void mousePressed(){
       eSpeed =(int) cp5.getController("Vitesse Ennemis").getValue();
       dropRate =(int) cp5.getController("Chance d'apparation d'un ennemi").getValue()/2;  
       volumeE=cp5.getController("Volume Explosion").getValue()/100;
-      volumeM=cp5.getController("Volume musique").getValue()/100;
-     
+      
       aireT = triangleA(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));
-      music.amp(volumeM);
+      
       explode.amp(volumeE);
       
       
