@@ -39,7 +39,6 @@ float volumeE = 0.025;
 //
 int dropRate = 5;
 
- 
 void setup(){
   size(800,600);
   frameRate(60);
@@ -48,117 +47,98 @@ void setup(){
   smooth();
   xVaisseau = width>>1;  
   yVaisseau = height>>1;
-  
+
   screen = 0;
   aireT = triangleA(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));
   explode = new SoundFile(this, "8BitExplosion.mp3"); //Variable qui correspond à un fichier son placé dans /data du dossier projet
   music = new SoundFile(this , "BackgroundMusic.mp3");
   music.amp(volumeM);
   music.loop();
-  
+
   fondAccueil = loadImage("fondAccueil.jpg");
   fondJeu = loadImage("fondJeu.png");
   asteroid = loadImage("asteroid.png");
   vaisseau = loadImage("vaisseau.png");
-  ////////
-   cp5 = new ControlP5(this);
-   cp5.setColorActive(0xffff0000).setColorForeground(0xffaa0000);
-   
-    cp5.addSlider("Taille Enemis")
+
+  cp5 = new ControlP5(this);
+  cp5.setColorActive(0xffff0000).setColorForeground(0xffaa0000);
+  cp5.addSlider("Taille Enemis")
       .setPosition(10,50)
       .setSize(550,40)
       .setRange(15,100)
       .setValue(tEnnemis)
       .setId(1)
       .setVisible(false);
-      
-   cp5.addSlider("Taille Vaisseau")
+  cp5.addSlider("Taille Vaisseau")
       .setPosition(10,170)
       .setSize(550,40)
       .setRange(15,100)
       .setValue(tVaisseau)
       .setId(2)
       .setVisible(false);
-      
-   cp5.addSlider("Vitesse Ennemis")
+  cp5.addSlider("Vitesse Ennemis")
       .setPosition(10,250)
       .setSize(550,40)
       .setRange(1,20)
       .setValue(eSpeed)
       .setId(3)
       .setVisible(false);
-      
-   cp5.addSlider("Vitesse Vaisseau")
+  cp5.addSlider("Vitesse Vaisseau")
       .setPosition(10,300)
       .setSize(550,40)
       .setRange(1,20)
       .setValue(vSpeed)
       .setId(4)
       .setVisible(false);
-      
-   cp5.addSlider("Volume musique")
+  cp5.addSlider("Volume musique")
       .setPosition(10,350)
       .setSize(550,40)
       .setRange(0,100)
       .setValue(volumeM*100)
       .setId(5)
       .setVisible(false);
-      
-   cp5.addSlider("Volume Explosion")
+  cp5.addSlider("Volume Explosion")
       .setPosition(10,400)
       .setSize(550,40)
       .setRange(0,100)
       .setValue(volumeE*100)
       .setId(6) 
       .setVisible(false);
-      
-   cp5.addSlider("Chance d'apparation d'un ennemi")
+  cp5.addSlider("Chance d'apparation d'un ennemi")
       .setPosition(10,450)
       .setSize(550,40)
       .setRange(0,100)
       .setValue(dropRate)
       .setId(6) 
       .setVisible(false);
-   //////
-   
 }
-
-//
 // Fonction d'affichage
-//
-void AffOp()
-{
+void AffOp(){
   int tE,tV;
   tE = (int)cp5.getController("Taille Enemis").getValue();
   tV = (int)cp5.getController("Taille Vaisseau").getValue();
-  
   imageMode(CENTER); 
   image(asteroid,725,70,tE,tE);
-  image(vaisseau,725,190,tV,tV);
-   
+  image(vaisseau,725,180,tV,tV);
 }
-
 void ecranOptions(){
   background(fondAccueil);
-  fill(255,0,0);
-    
-   cp5.getController("Taille Enemis").setVisible(true);
-   cp5.getController("Taille Vaisseau").setVisible(true);
-   cp5.getController("Vitesse Ennemis").setVisible(true);
-   cp5.getController("Vitesse Vaisseau").setVisible(true);
-   cp5.getController("Volume musique").setVisible(true);
-   cp5.getController("Volume Explosion").setVisible(true);
-   cp5.getController("Chance d'apparation d'un ennemi").setVisible(true);
-  textFont(titre,25);
+  cp5.getController("Taille Enemis").setVisible(true);
+  cp5.getController("Taille Vaisseau").setVisible(true);
+  cp5.getController("Vitesse Ennemis").setVisible(true);
+  cp5.getController("Vitesse Vaisseau").setVisible(true);
+  cp5.getController("Volume musique").setVisible(true);
+  cp5.getController("Volume Explosion").setVisible(true);
+  cp5.getController("Chance d'apparation d'un ennemi").setVisible(true);
   AffOp();
+  fill(0,127,255);
+  textFont(texte,25);
   text("Back / Retour",width>>1,height*0.9+10);
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.9)+40 && mouseY>(height*0.9)-40) { // Retour
     fill(255,50);
   }
   else noFill();
   rect(width>>1,height*0.9,200,80);
-
-
 }
 void draw(){
   switch(screen) {
@@ -178,15 +158,12 @@ void draw(){
               screen=0;
             }
             break;
-   case 2: ecranOptions(); break;             // Ecran Options     
-   case 3: ecranCopyrights(); break;          // Ecran Copyrights      
-   case 4: ecranSortie(); break;
+   case 2: ecranOptions(); break;          // Ecran Options     
+   case 3: ecranCredits(); break;          // Ecran Crédits
+   case 4: ecranSortie(); break;           // Ecran Sortie 
   }
 }
-
-//
 // Utilisation de la souris ecran d'accueil
-//
 void mousePressed(){
   if (screen == 0){ // Ecran Accueil
    if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height/3)+40 && mouseY>(height/3)-40) screen=1; //Click Souris sur Play/Jouer
@@ -203,7 +180,6 @@ void mousePressed(){
       cp5.getController("Volume musique").setVisible(false);
       cp5.getController("Volume Explosion").setVisible(false);
       cp5.getController("Chance d'apparation d'un ennemi").setVisible(false);
-      
       tEnnemis =(int) cp5.getController("Taille Enemis").getValue();
       tVaisseau = (int) cp5.getController("Taille Vaisseau").getValue();
       vSpeed =(int) cp5.getController("Vitesse Vaisseau").getValue();
@@ -211,12 +187,9 @@ void mousePressed(){
       dropRate =(int) cp5.getController("Chance d'apparation d'un ennemi").getValue()/2;  
       volumeE=cp5.getController("Volume Explosion").getValue()/100;
       volumeM=cp5.getController("Volume musique").getValue()/100;
-     
       aireT = triangleA(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));
       music.amp(volumeM);
       explode.amp(volumeE);
-      
-      
       screen=0;
     }
   }
@@ -228,66 +201,62 @@ void mousePressed(){
     if (mouseX<(width>>2)+100 && mouseX>(width>>2)-100 && mouseY<(height>>1)+40 && mouseY>(height>>1)-40) exit();
   }
 }
-
-//
 // Définition Ecran accueil
-//
 void ecranAccueil(){
-  
   background(fondAccueil);
   noFill();
   stroke(0,0,0);
   rectMode(CENTER);
   textFont(titre,75);
   textAlign(CENTER);
-  fill(255,0,0);
+  fill(0,127,255);
   text("ASTROBREAKER",width>>1,height/5);
   textFont(titre,28);
   noFill();
   if( (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height/3)+40 && mouseY>(height/3)-40) ){ //Souris sur PLAY / JOUER
    fill(255,50);
-  } else noFill();
+  }
+  else noFill();
   rect(width>>1,height/3,200,80);
-  fill(255,0,0);
+  fill(0,127,255);
   text("PLAY / JOUER",width>>1,(height/3)+10); 
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height>>1)+40 && mouseY>(height>>1)-40) { // Souris sur Options
-  fill(255,50);
-  } else noFill();
+    fill(255,50);
+  }
+  else noFill();
   rect(width>>1,height>>1,200,80);
-  fill(255,0,0);
+  fill(0,127,255);
   text("Options",width>>1,(height>>1)+10);
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.67)+40 && mouseY>(height*0.67)-40) { // Copyrights
-  fill(255,50);
-  } else noFill();
+    fill(255,50);
+  }
+  else noFill();
   rect(width>>1,height*0.67,200,80);
-  fill(255,0,0);
-  text("Copyrights",width>>1,height*0.67+10);
+  fill(0,127,255);
+  text("Credits",width>>1,height*0.67+10);
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.84)+40 && mouseY>(height*0.84)-40) { // Fin
-  fill(255,50);
-  } else noFill();
+    fill(255,50);
+  }
+  else noFill();
   rect(width>>1,height*0.84,200,80);
-  fill(255,0,0);
+  fill(0,0,255);
   text("Exit / Quitter",width>>1,height*0.84+10);
 }
 void ajouterEnnemis(){
   xE.add(0);
   yE.add((int)(Math.random()*(height-tEnnemis))+(tEnnemis/2));  
 }
-
- void bougerEnnemi(){
+void bougerEnnemi(){
   for(int i=0;i<xE.size();i++){
     xE.set(i,xE.get(i)+eSpeed);
   }
 }
-
-
-
-void ecranCopyrights(){
+void ecranCredits(){
   background(fondJeu);
   textAlign(CENTER);
   textFont(titre,75);
-  fill(255,0,0);
-  text("Copyrights",width>>1,height/5);
+  fill(255,255,0);
+  text("Credits",width>>1,height/5);
   textFont(texte,30);
   text("blablablablablablablablablablablablablabla",width>>1,height/3);
   text("blablablablablablablablablablablablablabla",width>>1,height/3+40);
@@ -295,6 +264,7 @@ void ecranCopyrights(){
   text("blablablablablablablablablablablablablabla",width>>1,height/3+120);
   text("blablablablablablablablablablablablablabla",width>>1,height/3+160);
   text("blablablablablablablablablablablablablabla",width>>1,height/3+200);
+  fill(255,0,0);
   text("Back / Retour",width>>1,height*0.9+10);
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.9)+40 && mouseY>(height*0.9)-40) { // Retour
     fill(255,50);
@@ -302,12 +272,11 @@ void ecranCopyrights(){
   else noFill();
   rect(width>>1,height*0.9,200,80);
 }
-
 void ecranSortie(){
   background(fondAccueil);
   textAlign(CENTER);
-  fill(255,0,0);
-  textFont(texte,30);
+  fill(0,0,255);
+  textFont(titre,30);
   text("Êtes-vous sûr de vouloir quitter ?",width>>1,height/3);
   if (mouseX<(width>>2)+100 && mouseX>(width>>2)-100 && mouseY<(height>>1)+40 && mouseY>(height>>1)-40) { // Retour
     fill(255,50);
@@ -320,19 +289,16 @@ void ecranSortie(){
   else noFill();
   rect(width*0.75,height>>1,200,80);
   textFont(texte,30);
-  fill(255,0,0);
+  fill(0,127,255);
   text("Yes / Oui",width>>2,(height>>1)+10);
   text("No / Non",width*0.75,(height>>1)+10);
-  
 }
-
 void bougerVaisseau(){
   if(up && (ys2>0))        yVaisseau-=vSpeed;
   if(down && (ys3<height)) yVaisseau+=vSpeed;
   if(left && (xs1>0))      xVaisseau-=vSpeed;
-  if(right && (xs2<width)) xVaisseau+=vSpeed;
-    
-    // nouveau sommet triangle
+  if(right && (xs2<width)) xVaisseau+=vSpeed; 
+  // nouveau sommet triangle
   xs1=xVaisseau;
   ys1=yVaisseau;
   xs2=xVaisseau+tVaisseau;
@@ -340,7 +306,6 @@ void bougerVaisseau(){
   xs3=xVaisseau+tVaisseau;
   ys3=yVaisseau+(tVaisseau>>1);
 }
-
 void keyPressed(){
   switch(keyCode){
     case 32 : espace = true; break;
@@ -367,16 +332,13 @@ void keyReleased(){
     case 68: right=         false; break;//d
   }  
 }
-
 void Sound(){ //Fonction appelée lors de chaque colision qui produit un son
     explode.amp(volumeE);
     explode.play();
 }
-
 void collision(){
   float x,y,r;
   r=tEnnemis>>1;
- 
   for (int i=0 ; i<xE.size();i++) {
     x=xE.get(i);y=yE.get(i);
     if(x-tEnnemis>width){
@@ -393,20 +355,16 @@ void collision(){
     }    
   }
 }
- 
 float triangleA(int px1, int py1 , int px2 ,int py2 ,int px3 , int py3){ // calcul l'aire d'un triangle
- 
   float A , longA,longB,longC ,longD;
   // A = 1/2||AB vectoriel AC||
   longA=px1-px3;
   longB=py1-py3;
   longC=px2-px3;
   longD=py2-py3;
- 
   A= 0.5*abs((longA*longD)-(longB*longC));
   return A;
 }
-   
 boolean colision(float x,float y ,float r){
   int xC,yC,xG,yG; // point sur le cercle de du vecteur centre gravité triangle centre cercle
   float longux,longuy,angle ,A1,A2,A3,AT;
@@ -423,34 +381,25 @@ boolean colision(float x,float y ,float r){
   A1=triangleA(xC,yC,xs1,ys1,xs2,ys2);
   A2=triangleA(xC,yC,xs2,ys2,xs3,ys3);
   A3=triangleA(xC,yC,xs1,ys1,xs3,ys3);
-   
   AT= A1+A2+A3;
   // la somme des 3 aires est égale alors le point est dans le triangle
   if (aireT==AT)                  return true;   
   else if(colC(xs1 ,ys1 , x,y,r)) return true;  
   else if(colC(xs2 ,ys2 , x,y,r)) return true;
   else if(colC(xs3 ,ys3 , x,y,r)) return true; 
-  
   return false;
 }
- 
 boolean colC(float xs,float ys,float xc,float yc,float r){// collision avec cercle et point sommet du triangle
   return (xs-xc)*(xs-xc)+(ys-yc)*(ys-yc)<= r*r;
- 
 }
- 
 void affichage(){
   int x,y;
- 
   for(int i = 0;i<xE.size();i++){ // affiche chaque ennemi
     x = xE.get(i); y = yE.get(i);
     fill(255);
     stroke(0);
     imageMode(CENTER);
     image(asteroid,x,y,tEnnemis,tEnnemis);
-    
-    
-   
   }
   fill(255,0,0);
   stroke(255,0,0);
