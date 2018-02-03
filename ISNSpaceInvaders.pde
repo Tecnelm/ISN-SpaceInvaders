@@ -119,7 +119,7 @@ void AffOp(){
   tV = (int)cp5.getController("Taille Vaisseau").getValue();
   imageMode(CENTER); 
   image(asteroid,725,70,tE,tE);
-  image(vaisseau,725,180,tV,tV);
+  image(vaisseau,725,190,tV,tV);
 }
 void ecranOptions(){
   background(fondAccueil);
