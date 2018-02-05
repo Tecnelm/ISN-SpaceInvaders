@@ -462,14 +462,16 @@ boolean colC(float xs,float ys,float xc,float yc,float r){// collision avec cerc
 }
 
 float triangleA(int px1, int py1 , int px2 ,int py2 ,int px3 , int py3){ // calcul l'aire d'un triangle
-  float A , longA,longB,longC ,longD;
-  // A = 1/2||AB vectoriel AC||
-  longA=px1-px3;
-  longB=py1-py3;
-  longC=px2-px3;
-  longD=py2-py3;
  
-  A= 0.5*abs((longA*longD)-(longB*longC));
+  float A , ACx,ACy,ABx ,ABy;
+  // A = 1/2 abs(AB ^ AC)
+  
+  ABx=px2-px1;
+  ABy=py2-py1;
+  ACx=px3-px1;
+  ACy=py3-py1;
+ 
+  A= 0.5*abs((ACx*ABy)-(ACy*ABx));
   return A;
 }
    
