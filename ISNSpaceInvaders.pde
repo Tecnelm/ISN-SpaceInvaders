@@ -30,9 +30,9 @@ boolean down=     false;
 boolean left=     false;
 boolean right=    false;
 
-int screen;                  //Ecran à afficher (0=Accueil, 1=Jeu, 2=Options, 3=Crédits, 4=Ecran de sortie
+int screen;                   //Ecran à afficher (0=Accueil, 1=Jeu, 2=Options, 3=Crédits, 4=Ecran de sortie
 
-double aireT;                 //Aire du triangle
+double aireT;                 //Aire du vaisseau (considéré comme un triangle)
 
 PFont titre, texte;           //Déclaration des polices d'écriture
 
@@ -60,7 +60,7 @@ void setup(){
   
   xVaisseau = width>>1;                                                                                                             //En binaire : décalage à droite des chiffres de 1 (0101 -> 0010). Revient ici à diviser par 2^1  ==> Fludification des calculs
   yVaisseau = height>>1;                                                                                                            //Autre ex: 11010001>>2  -> 00110100 : division par 2^2=4. "left shift" & "right shift"
-  aireT = triangleA(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));    //Calcul de l'aire du triangle
+  aireT = AireTriangle(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));    //Calcul de l'aire du vaisseau
   
   screen = 0;                                 //Initialisation de l'écran initial à l'écran d'accueil
   
@@ -264,14 +264,20 @@ void ecranCredits(){
   textAlign(CENTER);
   textFont(titre,75);
   fill(creditsTextColor);
-  text("Credits",width>>1,height/5);
+  text("Credits",width>>1,height/8);
   textFont(texte,30);
-  text("blablablablablablablablablablablablablabla",width>>1,height/3);
-  text("blablablablablablablablablablablablablabla",width>>1,height/3+40);
-  text("blablablablablablablablablablablablablabla",width>>1,height/3+80);
-  text("blablablablablablablablablablablablablabla",width>>1,height/3+120);
-  text("blablablablablablablablablablablablablabla",width>>1,height/3+160);
-  text("blablablablablablablablablablablablablabla",width>>1,height/3+200);
+  text("Système de collision : Clément G.",width>>1,height/5);
+  text("Ecran d’accueil : Vincent",width>>1,height/5+40);
+  text("Gestion des menus : Vincent / Clément G.",width>>1,height/5+80);
+  text("Sons : Clément V.",width>>1,height/5+120);
+  text("Gestion Clavier : Vincent",width>>1,height/5+160);
+  text("Organisation du code / Commentaires : Clément V.",width>>1,height/5+200);
+  text("Design et gestion des ennemis : Clément V. ",width>>1,height/5+240);
+  text("Game design : Clément G., V. / Vincent",width>>1,height/5+280);
+  text("Musique : \"Main Theme 8-BIT - ARMS\" - Loeder (Youtube)",width>>1,height/5+320);
+  textFont(texte,20);
+  text("Avec l'autorisation du créateur",width>>1,height/5+350);
+  textFont(texte,30);
   fill(creditsBackButtonColor);
   text("Back / Retour",width>>1,height*0.9+10);
   if (mouseX<(width>>1)+100 && mouseX>(width>>1)-100 && mouseY<(height*0.9)+40 && mouseY>(height*0.9)-40) {   //Bouton Retour
@@ -335,7 +341,7 @@ void mousePressed(){    //Au moment où le click souris est enfoncé
       eSpeed =(int) cp5.getController("Vitesse Ennemis").getValue();
       spawnRate =(int) cp5.getController("Chance d'apparation d'un ennemi").getValue()/2;  
       
-      aireT = triangleA(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));  //Mise à jour de l'aire du triangle (au cas où tVaisseau ou tEnnemis ont changé)
+      aireT = AireTriangle(xVaisseau, yVaisseau,xVaisseau+tVaisseau, (yVaisseau-(tVaisseau>>1)), xVaisseau+tVaisseau, (yVaisseau+(tVaisseau>>1)));  //Mise à jour de l'aire du triangle (au cas où tVaisseau ou tEnnemis ont changé)
       screen=0;   //Retour à l'accueil
     }
   }
@@ -419,7 +425,7 @@ void collision(){
       yE.remove(i);
     }
     else if ((y+r>yVaisseau-(tVaisseau>>1) && y-(tEnnemis>>1)<yVaisseau+(tVaisseau>>1)) && (x+(tEnnemis>>1)>xVaisseau && x-(tEnnemis>>1)<xVaisseau+tVaisseau)) { 
-      if (colision(x,y,r)) {
+      if (testCollision(x,y,r)) {
         xE.remove(i);
         yE.remove(i);
         Sound();
@@ -429,64 +435,62 @@ void collision(){
   }
 }
 
-boolean colision(float x,float y ,float r){
-  int xC,yC,xG,yG; // point sur le cercle de du vecteur centre gravité triangle centre cercle
-  float longux,longuy,angle ,A1,A2,A3,AT;
-  // centre de gravité du triangle
-  xG = (xs1+xs2+xs3)/3;
-  yG = (ys1+ys2+ys3)/3;    
-  longux = xG-x;
-  longuy = yG-y;
-  angle  = atan2(longuy,longux);  
-  //calcul du potentiel point de colision
-  xC= int(x+cos(angle)*r);
-  yC =int(y+sin(angle)*r);
-  // calcul des 3 aires créées par le point potentiel de collision
-  A1=triangleA(xC,yC,xs1,ys1,xs2,ys2);
-  A2=triangleA(xC,yC,xs2,ys2,xs3,ys3);
-  A3=triangleA(xC,yC,xs1,ys1,xs3,ys3);
+boolean testCollision(float xO,float yO ,float r){    //xO, yO = Coordonnées du centre du cercle
+  int xR,yR,xG,yG;                               //Définition des points G (centre de gravité du vaisseau, triangle), et R, intersection entre la longueur OG (centre du triangle - centre du cercle) et le cercle
+  float OGx, OGy, angle, A1, A2, A3, AT;         //Définition des composantes du vecteur OG, de l'angle entre OG et l'axe des abscisses, et des aires A1, A2, A3 et AT sommes des 3 aires (voir plus loin)
+
+  xG = (xs1+xs2+xs3)/3;                          //Définition du centre de gravité (moyenne des coordonnées des sommets)
+  yG = (ys1+ys2+ys3)/3;
+  OGx = xG-xO;                                   //Calcul des composantes du vecteur OG (centre - centre)
+  OGy = yG-yO;
+  angle  = atan2(OGy,OGx);                       //Calcul de l'angle entre OG et l'axe des abscisses (atan2 = arctan)
+                                                 
+  xR= int(xO+cos(angle)*r);                      //Calcul des coordonnées du point R
+  yR =int(yO+sin(angle)*r);
+
+  A1=AireTriangle(xR,yR,xs1,ys1,xs2,ys2);           //Calcul des aires des triangles intermédiaires utilisés pour connaître l'état de la collision
+  A2=AireTriangle(xR,yR,xs2,ys2,xs3,ys3);           //Si on considère le vaisseau comme un triangle ABC, on réalise les aires des triangles RAC, RAB et RBC
+  A3=AireTriangle(xR,yR,xs1,ys1,xs3,ys3);           //Si la somme AT (des trois aires A1, A2 et A3) est égale à l'aire du triangle, le point R est situé dans ou sur un des côtés du triangle, donc
    
-  AT= A1+A2+A3;
-  // la somme des 3 aires est égale alors le point est dans le triangle
-  if (aireT==AT)                  return true;   
-  else if(colC(xs1 ,ys1 , x,y,r)) return true;  
-  else if(colC(xs2 ,ys2 , x,y,r)) return true;
-  else if(colC(xs3 ,ys3 , x,y,r)) return true; 
+  AT= A1+A2+A3;                                  
+
+  if (aireT==AT)                                     return true;   //il y a collision, on retourne true
+  else if(collisionCercleSommet(xs1 ,ys1 , xO,yO,r)) return true;   //Autre cas : Si un des sommets du triangle rentre en collision avec le cercle, on retourne true
+  else if(collisionCercleSommet(xs2 ,ys2 , xO,yO,r)) return true;
+  else if(collisionCercleSommet(xs3 ,ys3 , xO,yO,r)) return true; 
   
-  return false;
+  return false;                                                     //Autrement, on retourne false
 }
 
-boolean colC(float xs,float ys,float xc,float yc,float r){// collision avec cercle et point sommet du triangle
-  return (xs-xc)*(xs-xc)+(ys-yc)*(ys-yc)<= r*r;
- 
+boolean collisionCercleSommet(float xS,float yS,float xO,float yO,float r){ //Test de la collision entre le cercle et un des sommets. On considère le sommet S et le cercle de centre O
+  return (xS-xO)*(xS-xO)+(yS-yO)*(yS-yO)<= r*r;                             //Si la longueur OS est inférieure ou égale au rayon du cercle, il y collision, on retourne true
 }
 
-float triangleA(int px1, int py1 , int px2 ,int py2 ,int px3 , int py3){ // calcul l'aire d'un triangle
- 
-  float A , ACx,ACy,ABx ,ABy;
-  // A = 1/2 abs(AB ^ AC)
+float AireTriangle(int xR, int yR , int xS1 ,int yS1 ,int xS2 , int yS2){      //Calcul de l'aire des triangles (vaisseau, et intermédiaires)
+                                                                            
+  float Aire, RS1x, RS1y, RS2x, RS2y;                                       //RS1 = vecteur définit par les points R et S1 (sommet 1), RS2 = vecteur définit par les points R et S2 (sommet 2)
   
-  ABx=px2-px1;
-  ABy=py2-py1;
-  ACx=px3-px1;
-  ACy=py3-py1;
+  RS1x=xS1-xR;                                                              //Calcul des coordonnées des vecteurs
+  RS1y=yS1-yR;
+  RS2x=xS2-xR;
+  RS2y=yS2-yR;
  
-  A= 0.5*abs((ACx*ABy)-(ACy*ABx));
-  return A;
+  Aire = 0.5*abs((RS2x*RS1y)-(RS2y*RS1x));                                  //Calcul de l'aire du triangle Aire = 1/2*(RS1 ^ RS2) (^ = Vectorielle). abs = valeur absolue
+  return Aire;
 }
    
-void Sound(){ //Fonction appelée lors de chaque colision qui produit un son
+void Sound(){                                                               //Fonction appelée lors de chaque colision qui produit un son
     explode.play();
 } 
 
-void affichage(){
-  int x,y;
+void affichage(){                                                           //Affichage des ennemis
+  int x,y;                                                                  //Varibles qui changent à chaque tour de boucle
  
-  for(int i = 0;i<xE.size();i++){ // affiche chaque ennemi
-    x = xE.get(i); y = yE.get(i);
-    imageMode(CENTER);
+  for(int i = 0;i<xE.size();i++){                                           //Pour chaque cercle
+    x = xE.get(i); y = yE.get(i);                                           //Récupération des coordonnées du cercle
+    imageMode(CENTER);                                                      //Affichage (et éventuellement remise à l'échelle) de l'astéroide
     image(asteroid,x,y,tEnnemis,tEnnemis); 
   }
   imageMode(CORNER);
-  image(vaisseau,xs1,ys1-tVaisseau/2,tVaisseau,tVaisseau);
+  image(vaisseau,xs1,ys1-tVaisseau/2,tVaisseau,tVaisseau);                  //Même chose pour le vaisseau
 }
