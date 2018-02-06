@@ -466,16 +466,16 @@ boolean collisionCercleSommet(float xS,float yS,float xO,float yO,float r){ //Te
   return (xS-xO)*(xS-xO)+(yS-yO)*(yS-yO)<= r*r;                             //Si la longueur OS est inférieure ou égale au rayon du cercle, il y collision, on retourne true
 }
 
-float AireTriangle(int xR, int yR , int xS1 ,int yS1 ,int xS2 , int yS2){      //Calcul de l'aire des triangles (vaisseau, et intermédiaires)
+float AireTriangle(int xS1, int yS1 , int xS2 ,int yS2 ,int xS3 , int yS3){      //Calcul de l'aire des triangles (vaisseau, et intermédiaires)
                                                                             
-  float Aire, RS1x, RS1y, RS2x, RS2y;                                       //RS1 = vecteur définit par les points R et S1 (sommet 1), RS2 = vecteur définit par les points R et S2 (sommet 2)
+  float Aire, S1x, S1y, S2x, S2y;                                       //RS1 = vecteur définit par les points R et S1 (sommet 1), RS2 = vecteur définit par les points R et S2 (sommet 2)
   
-  RS1x=xS1-xR;                                                              //Calcul des coordonnées des vecteurs
-  RS1y=yS1-yR;
-  RS2x=xS2-xR;
-  RS2y=yS2-yR;
+  S1x=xS2-xS1;                                                              //Calcul des coordonnées des vecteurs
+  S1y=yS2-yS1;
+  S2x=xS3-xS1;
+  S2y=yS3-yS1;
  
-  Aire = 0.5*abs((RS2x*RS1y)-(RS2y*RS1x));                                  //Calcul de l'aire du triangle Aire = 1/2*(RS1 ^ RS2) (^ = Vectorielle). abs = valeur absolue
+  Aire = 0.5*abs((S2x*S1y)-(S2y*S1x));                                  //Calcul de l'aire du triangle Aire = 1/2*(RS1 ^ RS2) (^ = Vectorielle). abs = valeur absolue
   return Aire;
 }
    
