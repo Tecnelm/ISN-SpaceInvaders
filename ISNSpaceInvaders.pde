@@ -436,21 +436,21 @@ void collision(){
 }
 
 boolean testCollision(float xO,float yO ,float r){    //xO, yO = Coordonnées du centre du cercle
-  int xR,yR,xG,yG;                               //Définition des points G (centre de gravité du vaisseau, triangle), et R, intersection entre la longueur OG (centre du triangle - centre du cercle) et le cercle
-  float OGx, OGy, angle, A1, A2, A3, AT;         //Définition des composantes du vecteur OG, de l'angle entre OG et l'axe des abscisses, et des aires A1, A2, A3 et AT sommes des 3 aires (voir plus loin)
+  int xR,yR,xG,yG;                                    //Définition des points G (centre de gravité du vaisseau, triangle), et R, intersection entre la longueur OG (centre du triangle - centre du cercle) et le cercle
+  float OGx, OGy, angle, A1, A2, A3, AT;              //Définition des composantes du vecteur OG, de l'angle entre OG et l'axe des abscisses, et des aires A1, A2, A3 et AT sommes des 3 aires (voir plus loin)
 
-  xG = (xs1+xs2+xs3)/3;                          //Définition du centre de gravité (moyenne des coordonnées des sommets)
+  xG = (xs1+xs2+xs3)/3;                               //Définition du centre de gravité (moyenne des coordonnées des sommets)
   yG = (ys1+ys2+ys3)/3;
-  OGx = xG-xO;                                   //Calcul des composantes du vecteur OG (centre - centre)
+  OGx = xG-xO;                                        //Calcul des composantes du vecteur OG (centre - centre)
   OGy = yG-yO;
-  angle  = atan2(OGy,OGx);                       //Calcul de l'angle entre OG et l'axe des abscisses (atan2 = arctan)
+  angle  = atan2(OGy,OGx);                            //Calcul de l'angle entre OG et l'axe des abscisses (atan2 = arctan)
                                                  
-  xR= int(xO+cos(angle)*r);                      //Calcul des coordonnées du point R
+  xR= int(xO+cos(angle)*r);                           //Calcul des coordonnées du point R
   yR =int(yO+sin(angle)*r);
 
-  A1=AireTriangle(xR,yR,xs1,ys1,xs2,ys2);           //Calcul des aires des triangles intermédiaires utilisés pour connaître l'état de la collision
-  A2=AireTriangle(xR,yR,xs2,ys2,xs3,ys3);           //Si on considère le vaisseau comme un triangle ABC, on réalise les aires des triangles RAC, RAB et RBC
-  A3=AireTriangle(xR,yR,xs1,ys1,xs3,ys3);           //Si la somme AT (des trois aires A1, A2 et A3) est égale à l'aire du triangle, le point R est situé dans ou sur un des côtés du triangle, donc
+  A1=AireTriangle(xR,yR,xs1,ys1,xs2,ys2);             //Calcul des aires des triangles intermédiaires utilisés pour connaître l'état de la collision
+  A2=AireTriangle(xR,yR,xs2,ys2,xs3,ys3);             //Si on considère le vaisseau comme un triangle ABC, on réalise les aires des triangles RAC, RAB et RBC
+  A3=AireTriangle(xR,yR,xs1,ys1,xs3,ys3);             //Si la somme AT (des trois aires A1, A2 et A3) est égale à l'aire du triangle, le point R est situé dans ou sur un des côtés du triangle, donc
    
   AT= A1+A2+A3;                                  
 
