@@ -48,7 +48,7 @@ float volumeE = 0.50;         //Valeur initiale en % du volume de l'explosion
 int spawnRate = 5;            //Valeur initiale en % taux d'apparition maximum
 
 color sliderActiveColor=#FF0000, sliderForegroundColor=#AA0000;         //Couleurs liées au sliderBar
-color gameTitleColor=#FF0000, homeTextColor=#FF0000, gameTextColor=#FF0000, creditsTextColor=#FF0000, exitTextColor=#FF0000;    //Couleurs liées au texte dans les différents menus
+color gameTitleColor=#FF0000, homeTextColor=#FF0000, gameTextColor=#FF0000, creditsTextColor=#FFE200, exitTextColor=#FF0000;    //Couleurs liées au texte dans les différents menus
 color optionsBackButtonColor=#007FFF, creditsBackButtonColor=#FF0000, exitYesButtonColor=#FF0000, exitNoButtonColor=#FF0000;    //Couleurs liées au texte dans différents "boutons"
  
 void setup(){
