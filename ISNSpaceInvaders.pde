@@ -199,7 +199,9 @@ void ecranJeu(){
   fill(gameTextColor);
   stroke(255,0,0);
   textFont(texte,20);                                  //Ecriture des différents éléments
+  textAlign(RIGHT);
   text("Space/Espace : Pause",width-100,20);
+  textAlign(LEFT);
   String score = "Score : "+playerScore;
   textFont(texte,25);
   text(score,60,30);
